@@ -6,6 +6,8 @@ library(xgboost)
 library(lubridate)
 library(sessioninfo)
 
+rand_int <- sample.int(10000, 1)
+
 set.seed(598)
 dat <- twoClassSim(2000, noiseVars = 100)
 
@@ -48,7 +50,7 @@ res <-
 		task = "xgbTree"
 	)
 
-file <- paste(prefix, workers, sample.int(10000, 1), sep = "_")
+file <- paste(prefix, workers, rand_int, sep = "_")
 
 save(res, file = paste0(file, ".RData"))
 
