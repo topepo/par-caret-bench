@@ -2,3 +2,4 @@
 .DS_Store
 *.history
 *.Rout
+.Rhistory
