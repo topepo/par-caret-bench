@@ -42,6 +42,7 @@ mod <- train(
 res <-
 	data.frame(
 		time = as.vector(mod$times$everything[3]) / 60,
+		os = Sys.info()[['sysname']],
 		R = R.version.string,
 		when = now(),
 		workers = workers,
