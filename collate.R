@@ -15,7 +15,7 @@ for (i in seq_along(files)) {
 }
 
 medians <- times %>%
-	group_by(workers, setting, method, task, setting) %>%
+	group_by(workers, setting, method, task, setting, os) %>%
 	dplyr::summarize(time = median(time),
 									 n = length(time)) 
 
@@ -27,11 +27,15 @@ medians <- medians %>%
 	dplyr::select(-workers) %>%
 	full_join(medians) %>%
 	mutate(speedup = baseline/time,
-				 computer = ifelse(grepl("iMac", setting), "Desktop (10)", "Laptop (4)"))
+				 computer = case_when(
+				 	grepl("iMac", setting) ~ "Desktop (10, 3.0GHz)",
+				 	grepl("MacBookPro", setting) ~ "Laptop (4, 2.5GHz)",	
+				 	grepl("DIY", setting) ~ "Desktop (6, 3.4GHz)"
+				 )
+	)
 
 
-
-ggplot(medians, aes(x = workers, y = time,  col = computer)) + 
+ggplot(medians, aes(x = workers, y = time,  col = computer, shape = os)) + 
 	geom_point() + 
 	geom_line()  + 
 	theme(legend.position = "top") + 
@@ -39,7 +43,7 @@ ggplot(medians, aes(x = workers, y = time,  col = computer)) +
 	xlab("# Workers") + 
 	facet_wrap(~method)
 
-ggplot(medians, aes(x = workers, y = speedup, col = computer)) + 
+ggplot(medians, aes(x = workers, y = speedup, col = computer, shape = os)) + 
 	geom_point(cex = 2) + 
 	geom_line() + 
 	geom_abline(col = "green") + 
