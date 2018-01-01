@@ -1,8 +1,8 @@
 library(dplyr)
 library(ggplot2)
+theme_set(theme_bw())
 
 files <- list.files(pattern = "RData$", recursive = TRUE, full.names = TRUE)
-
 
 for (i in seq_along(files)) {
 	load(files[i])
@@ -15,7 +15,7 @@ for (i in seq_along(files)) {
 }
 
 medians <- times %>%
-	group_by(workers, setting, method, task) %>%
+	group_by(workers, setting, method, task, setting) %>%
 	dplyr::summarize(time = median(time),
 									 n = length(time)) 
 
@@ -25,22 +25,26 @@ medians <- medians %>%
 	dplyr::rename(baseline = time) %>%
 	ungroup %>%
 	dplyr::select(-workers) %>%
-	inner_join(medians) %>%
-	mutate(speedup = baseline/time)
+	full_join(medians) %>%
+	mutate(speedup = baseline/time,
+				 computer = ifelse(grepl("iMac", setting), "Desktop (10)", "Laptop (4)"))
 
 
-ggplot(medians, aes(x = workers, y = time, col = method)) + 
+
+ggplot(medians, aes(x = workers, y = time,  col = computer)) + 
 	geom_point() + 
 	geom_line()  + 
 	theme(legend.position = "top") + 
 	ylab("Execution Time") + 
-	xlab("# Workers")
+	xlab("# Workers") + 
+	facet_wrap(~method)
 
-ggplot(medians, aes(x = workers, y = speedup, col = method)) + 
+ggplot(medians, aes(x = workers, y = speedup, col = computer)) + 
 	geom_point(cex = 2) + 
 	geom_line() + 
-	geom_abline(col = "green", lty = 3) + 
-	theme(legend.position = "none")  + 
+	geom_abline(col = "green") + 
+	theme(legend.position = "top")  + 
 	ylab("Speed-Up") + 
-	xlab("# Workers")
+	xlab("# Workers") + 
+	facet_wrap(~method)
 
