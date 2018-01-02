@@ -57,7 +57,7 @@ res <-
 		when = now(),
 		workers = workers,
 		setting = prefix,
-		method = "psock",
+		method = "fork",
 		task = "xgbTree"
 	)
 
