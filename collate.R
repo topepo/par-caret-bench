@@ -31,9 +31,10 @@ medians <- medians %>%
 				 	grepl("iMac", setting) ~ "Desktop (10, 3.0GHz)",
 				 	grepl("MacBookPro", setting) ~ "Laptop (4, 2.5GHz)",	
 				 	grepl("DIY", setting) ~ "Desktop (6, 3.4GHz)"
-				 )
+				 ),
+				 method = ifelse(method == "domc", "fork (doMC)", method),
+				 method = ifelse(method == "fork", "fork (doParallel)", method)
 	)
-
 
 ggplot(medians, aes(x = workers, y = time,  col = computer, shape = os)) + 
 	geom_point() + 
@@ -46,7 +47,7 @@ ggplot(medians, aes(x = workers, y = time,  col = computer, shape = os)) +
 ggplot(medians, aes(x = workers, y = speedup, col = computer, shape = os)) + 
 	geom_point(cex = 2) + 
 	geom_line() + 
-	geom_abline(col = "green") + 
+	geom_abline(col = "black") + 
 	theme(legend.position = "top")  + 
 	ylab("Speed-Up") + 
 	xlab("# Workers") + 
